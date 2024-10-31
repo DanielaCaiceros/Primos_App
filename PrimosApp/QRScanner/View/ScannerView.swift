@@ -96,20 +96,6 @@ struct QRScannerView: View {
             }
             
             Spacer(minLength: 45)
-            
-            // Barra de navegación
-            HStack {
-                Image(systemName: "house")
-                Spacer()
-                Image(systemName: "qrcode")
-                Spacer()
-                Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
-                Spacer()
-                Image(systemName: "map.circle.fill")
-            }
-            .font(.title)
-            .padding(.horizontal, 30)
-            .foregroundColor(.gray)
         }
         .padding(15)
         // Checking Camera Permission, when the view is visible
