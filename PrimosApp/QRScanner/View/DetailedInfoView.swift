@@ -8,12 +8,25 @@
 import SwiftUI
 
 struct DetailedInfoView: View {
+    @Environment(\.dismiss) var dismiss
     var userID: String
     private let papaloteGreen : Color = Color.init(red: 0.745, green: 0.839, blue: 0.0)
     
     var body: some View {
         VStack(spacing: 20) {
-            Spacer()
+            HStack {
+                Spacer()
+                Button {
+                    dismiss() // Despedir la vista
+                } label: {
+                    Image(systemName: "xmark") // Icono de la "tachita"
+                        .font(.title)
+                        .foregroundColor(.gray)
+                        .padding()
+                }
+            }
+            .padding(.bottom, 30)
+        
             // Icono y logo
             Image("logo_papalote") // Agrega la imagen del logo
                 .resizable()
@@ -46,19 +59,6 @@ struct DetailedInfoView: View {
 
             Spacer()
 
-            // Barra de navegación
-            HStack {
-                Image(systemName: "house")
-                Spacer()
-                Image(systemName: "qrcode")
-                Spacer()
-                Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
-                Spacer()
-                Image(systemName: "map.circle.fill")
-            }
-            .font(.title)
-            .padding(.horizontal, 30)
-            .foregroundColor(.gray)
         }
         .padding()
     }
