@@ -15,7 +15,7 @@ struct ContentView: View {
                 .tabItem {
                     Image(systemName: "house")
                 }
-            QR()
+            QRScannerView()
                 .tabItem {
                     Image(systemName: "qrcode")
                 }
