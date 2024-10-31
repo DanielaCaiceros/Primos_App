@@ -58,7 +58,8 @@ struct DetailedInfoView: View {
                 .padding(.horizontal)
 
             Spacer()
-
+            
+            // Barra de navegación
         }
         .padding()
     }
