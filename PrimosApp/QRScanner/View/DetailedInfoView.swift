@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailedInfoView: View {
     @Environment(\.dismiss) var dismiss
-    var userID: String
+    var actividadID: String
     private let papaloteGreen : Color = Color.init(red: 0.745, green: 0.839, blue: 0.0)
     
     var body: some View {
@@ -48,6 +48,10 @@ struct DetailedInfoView: View {
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
+                HStack {
+                    Text("ActividadID")
+                    Text(actividadID)
+                }
             }
 
             // Imagen de la exhibición
@@ -67,5 +71,5 @@ struct DetailedInfoView: View {
 
 
 #Preview {
-    DetailedInfoView(userID: "userID")
+    DetailedInfoView(actividadID: "actividadID")
 }
