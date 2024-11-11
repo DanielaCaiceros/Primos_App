@@ -1,4 +1,3 @@
-//
 //  Actividades.swift
 //  PrimosApp
 //
@@ -8,20 +7,28 @@
 import Foundation
 import SwiftUI
 
-/*struct Actividades: Identifiable, Codable {
-    var id : Int
-    var title: String = ""
-    var description: String = ""
-    var imageUrl: String = ""
-    var category: String = "" 
-}
-*/
 
-struct Actividad: Identifiable {
-    let id = UUID()
-    let title: String
-    let description: String
-    let imageUrl: String
-    let imageTitle: String
-    let color: Color
+struct Zona: Identifiable, Codable {
+    var id: String
+    var nombre: String
+    var color: String
+    var foto: String
+    
 }
+
+
+struct Actividad: Identifiable, Codable {
+    var id: String
+    var nombre: String
+    var descripcion: String
+    var foto: String
+    var calificacion: String
+    var x: Int
+    var y: Int
+    var Piso: Int
+    var tiempo: Int
+    var disponibilidad: Bool
+    var zonaId: String
+}
+
+

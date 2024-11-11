@@ -6,33 +6,64 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
-/*class ActividadesModelo: ObservableObject {
-    @Published var actividades: [Actividades] = []
+class ActividadesModelo: ObservableObject {
+    @Published var zonas: [Zona] = []
+    @Published var actividades: [Actividad] = []
     
-    func fetchActivities() {
-        guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts") else { return }
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                do {
-                    let decodedData = try JSONDecoder().decode([Post].self, from: data)
-                    let actividades = decodedData.map { post in
-                        Actividades(id: post.id,  description: post.body)
-                    }
-                    DispatchQueue.main.async {
-                        self.actividades = actividades
-                    }
-                } catch {
-                    print("Error al decodificar los datos: \(error)")
-                }
+    let db = Firestore.firestore()
+    
+    // Obtener zonas desde Firebase
+    func getZonas() async {
+        do {
+            let querySnapshot = try await db.collection("Zona").getDocuments()
+            var arrZonas: [Zona] = []
+            
+            for document in querySnapshot.documents {
+                let data = document.data()
+                let nombre = data["nombre"] as? String ?? "-"
+                let color = data["color"] as? String ?? "#FFFFFF" // Color en formato hex
+                let foto = data["foto"] as? String ?? "Logo"
+                let id = document.documentID
+                
+                let zona = Zona(id: id, nombre: nombre, color: color, foto: foto)
+                arrZonas.append(zona)
             }
-        }.resume()
+            self.zonas = arrZonas
+            
+        } catch {
+            print("Error al obtener zonas: \(error.localizedDescription)")
+        }
+    }
+    
+    func getActividadesPorZona(zonaId: String) async {
+        do {
+            let querySnapshot = try await db.collection("Actividad").whereField("id_zona", isEqualTo: zonaId).getDocuments()
+            var arrActividades: [Actividad] = []
+            
+            for document in querySnapshot.documents {
+                let data = document.data()
+                let nombre = data["nombre"] as? String ?? "-"
+                let descripcion = data["descripcion"] as? String ?? "-"
+                let foto = data["foto"] as? String ?? "-"
+                let calificacion = data["calificacion"] as? String ?? "-"
+                let x = data["x"] as? Int ?? 0
+                let y = data["y"] as? Int ?? 0
+                let Piso = data["z"] as? Int ?? 0
+                let tiempo = data["tiempo"] as? Int ?? 0
+                let disponibilidad = data["disponibilidad"] as? Bool ?? false
+                let id = document.documentID
+                
+                let zonaId = data["id_zona"] as? String ?? ""
+
+                let actividad = Actividad(id: id, nombre: nombre, descripcion: descripcion, foto: foto, calificacion: calificacion, x: x, y: y, Piso: Piso, tiempo: tiempo, disponibilidad: disponibilidad, zonaId: zonaId)
+                arrActividades.append(actividad)
+            }
+           self.actividades = arrActividades
+        
+        } catch {
+            print("Error al obtener actividades: \(error.localizedDescription)")
+        }
     }
 }
-
-struct Post: Codable {
-    var id: Int
-    var title: String
-    var body: String
-}*/

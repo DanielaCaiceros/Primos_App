@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F794E7F32CE2A2470064C46D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F794E7F22CE2A2470064C46D /* FirebaseAuth */; };
+		F794E7F52CE2A2470064C46D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F794E7F42CE2A2470064C46D /* FirebaseFirestore */; };
+		F794E7F72CE2A2470064C46D /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F794E7F62CE2A2470064C46D /* FirebaseStorage */; };
+		F794E7FB2CE2A6840064C46D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F794E7FA2CE2A6840064C46D /* GoogleService-Info.plist */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		F789D5112CBB2FFF00A14C51 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +34,7 @@
 		F789D5002CBB2FFD00A14C51 /* PrimosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrimosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F789D5102CBB2FFF00A14C51 /* PrimosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrimosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F789D51A2CBB2FFF00A14C51 /* PrimosAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrimosAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F794E7FA2CE2A6840064C46D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +60,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F794E7F32CE2A2470064C46D /* FirebaseAuth in Frameworks */,
+				F794E7F52CE2A2470064C46D /* FirebaseFirestore in Frameworks */,
+				F794E7F72CE2A2470064C46D /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +86,7 @@
 		F789D4F72CBB2FFD00A14C51 = {
 			isa = PBXGroup;
 			children = (
+				F794E7FA2CE2A6840064C46D /* GoogleService-Info.plist */,
 				F789D5022CBB2FFD00A14C51 /* PrimosApp */,
 				F789D5132CBB2FFF00A14C51 /* PrimosAppTests */,
 				F789D51D2CBB2FFF00A14C51 /* PrimosAppUITests */,
@@ -112,6 +124,9 @@
 			);
 			name = PrimosApp;
 			packageProductDependencies = (
+				F794E7F22CE2A2470064C46D /* FirebaseAuth */,
+				F794E7F42CE2A2470064C46D /* FirebaseFirestore */,
+				F794E7F62CE2A2470064C46D /* FirebaseStorage */,
 			);
 			productName = PrimosApp;
 			productReference = F789D5002CBB2FFD00A14C51 /* PrimosApp.app */;
@@ -195,6 +210,9 @@
 			);
 			mainGroup = F789D4F72CBB2FFD00A14C51;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F794E7F12CE2A2470064C46D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F789D5012CBB2FFD00A14C51 /* Products */;
 			projectDirPath = "";
@@ -212,6 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F794E7FB2CE2A6840064C46D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +575,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F794E7F12CE2A2470064C46D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F794E7F22CE2A2470064C46D /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F794E7F12CE2A2470064C46D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F794E7F42CE2A2470064C46D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F794E7F12CE2A2470064C46D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F794E7F62CE2A2470064C46D /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F794E7F12CE2A2470064C46D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F789D4F82CBB2FFD00A14C51 /* Project object */;
 }
