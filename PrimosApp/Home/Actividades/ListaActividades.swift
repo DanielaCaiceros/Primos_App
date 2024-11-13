@@ -23,9 +23,10 @@ class ActividadesModelo: ObservableObject {
             for document in querySnapshot.documents {
                 let data = document.data()
                 let nombre = data["nombre"] as? String ?? "-"
-                let color = data["color"] as? String ?? "#FFFFFF" // Color en formato hex
+                let color = data["color"] as? String ?? "#FFFFFF"
                 let foto = data["foto"] as? String ?? "Logo"
                 let id = document.documentID
+ 
                 
                 let zona = Zona(id: id, nombre: nombre, color: color, foto: foto)
                 arrZonas.append(zona)
@@ -66,4 +67,5 @@ class ActividadesModelo: ObservableObject {
             print("Error al obtener actividades: \(error.localizedDescription)")
         }
     }
+    
 }

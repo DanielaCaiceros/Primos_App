@@ -1,10 +1,3 @@
-//  Home.swift
-//  PrimosApp
-//
-//  Created by Daniela Caiceros on 12/10/24.
-//
-
-
 import SwiftUI
 
 struct Home: View {
@@ -13,49 +6,46 @@ struct Home: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Logo en la parte superior
-                Image("logo_verde") // Asegúrate de que el nombre de la imagen coincida con el asset
+                Image(Logos.logo_verde)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 150, height: 150)
-                    .padding(.top, 20)
                 
                 Text("¿Qué quieres ver en el museo?")
                     .font(.title3)
-                    .padding(.bottom, 20)
                 
-                // Mostrar las zonas o mensaje de carga
                 if !actividadesModelo.zonas.isEmpty {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            ForEach(actividadesModelo.zonas, id: \.id) { zona in
-                                NavigationLink(destination: ActividadesView(actividadesModelo: actividadesModelo, zona: zona)) {
-                                    HStack {
-                                        Image(zona.foto) // Imagen de la zona desde los assets
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
+                        ForEach(actividadesModelo.zonas.prefix(6), id: \.id) { zona in
+                            NavigationLink(destination: ActividadesView(actividadesModelo: actividadesModelo, zona: zona)) {
+                                VStack {
+                                    if let url = URL(string: zona.foto) {
+                                        AsyncImage(url: url) { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: 200, height: 150)
+                                        } placeholder: {
+                                            ProgressView()
+                                                .frame(width: 125, height: 75)
+                                        }
+                                    } else {
+                                        Image(systemName: "photo")
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
-                                            .frame(width: 100, height: 100)
-                                            .padding()
-                                        
-                                        Text(zona.nombre)
-                                            .font(.title3)
-                                            .foregroundColor(Color(hex: zona.color)) // Convierte el color hexadecimal
-                                            .padding()
+                                            .frame(width: 125, height: 75)
+                                            .foregroundColor(.gray)
                                     }
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 5)
                                 }
                             }
                         }
-                        .padding()
                     }
+                    .padding()
                 } else {
                     ProgressView("Cargando zonas...")
                         .padding()
                 }
             }
-            .navigationTitle("Zonas")
             .onAppear {
                 Task {
                     await actividadesModelo.getZonas()
@@ -64,6 +54,7 @@ struct Home: View {
         }
     }
 }
+
 extension Color {
     init(hex: String) {
         let hexSanitized = hex.replacingOccurrences(of: "#", with: "")
