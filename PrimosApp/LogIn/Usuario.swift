@@ -6,3 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct Usuario : Identifiable, Codable {
+    var id : String
+    var nombre : String
+    var correo : String
+    var password : String
+    var edad : Int
+    var sal : String
+}
