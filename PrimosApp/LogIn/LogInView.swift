@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct LogInView: View {
-    @State var usuario = ""
-    @State var correo = ""
-    @State var password = ""
-    @State var edad = 0
+    @StateObject private var nuevoUsuarioVM = nuevoUsuarioModel()
     @State private var isPasswordVisible: Bool = false
     @State private var isChecked: Bool = false
     @State private var isSignInScreen: Bool = false
+    @State private var nameError : String?
+    @State private var mailError : String?
+    @State private var passwordError : String?
+    @State private var adviceMessage: String?
+    @State private var someError : Bool = false
     
     var body: some View {
         
@@ -49,35 +51,65 @@ struct LogInView: View {
                 VStack (alignment: .leading) {
                     Text("Nombre")
                         .font(.title3)
-                    TextField("Nombre", text: $correo)
+                    TextField("Nombre", text: $nuevoUsuarioVM.nombre)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(nameError == nil ? Color.clear : Color.red, lineWidth: 1)
+                        )
                         .padding(.bottom, 8)
                     
+                    // Si existe, mostrar un error en el nombre
+                    if let eName = nameError {
+                        Text(eName)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
+
                     Text("Correo")
                         .font(.title3)
-                    TextField("correo@example.com", text: $usuario)
+                    TextField("correo@example.com", text: $nuevoUsuarioVM.correo)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.emailAddress)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(mailError == nil ? Color.clear : Color.red, lineWidth: 1)
+                        )
                         .padding(.bottom, 8)
+                    
+                    // Si existe, mostrar un error en el correo
+                    if let eMail = mailError {
+                        Text(eMail)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
                     
                     Text("Contraseña")
                         .font(.title3)
                     HStack{
                         if isPasswordVisible {
-                            TextField("", text: $password)
+                            TextField("", text: $nuevoUsuarioVM.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                             
                         } else {
-                            SecureField("12345", text: $password)
+                            SecureField("12345", text: $nuevoUsuarioVM.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                         }
                         
                         Button {
@@ -89,9 +121,16 @@ struct LogInView: View {
                     }
                     .padding(.bottom, 8)
                     
+                    // Si existe, mostrar un error en la contraseña
+                    if let ePass = passwordError {
+                        Text(ePass)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
+                    
                     Text("Edad de los visitantes:")
                         .font(.title3)
-                    TextField("Ingresa la edad", value: $edad, formatter: NumberFormatter())
+                    TextField("Ingresa la edad", value: $nuevoUsuarioVM.edad, formatter: NumberFormatter())
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
@@ -105,9 +144,17 @@ struct LogInView: View {
                     }.toggleStyle(CheckboxToggleStyle())
                 }.padding(.all, 8)
                 
+                // Si existe, mostrar un error para el aviso de recopilación de datos
+                if let advice = adviceMessage {
+                    Text(advice)
+                        .foregroundColor(.red) // Color del texto del error
+                        .font(.caption) // Tamaño pequeño para el mensaje
+                }
+                
                 VStack {
                     Button {
                         // Enviar los datos de registro a la BD
+                        validatePostUser()
                     } label: {
                         Text("Registrarme")
                             .padding()
@@ -138,8 +185,42 @@ struct LogInView: View {
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.88)
     }
     
-    func salt() {
+    private func validatePostUser() {
+        someError = false
         
+        if nuevoUsuarioVM.nombre.isEmpty {
+            nameError = "Este campo no puede estar vacío."
+            someError = true
+        } else {
+            nameError = nil
+        }
+        if nuevoUsuarioVM.correo.isEmpty {
+            mailError = "Este campo no puede estar vacío."
+            someError = true
+        } else {
+            mailError = nil
+        }
+        if nuevoUsuarioVM.password.isEmpty{
+            passwordError = "Este campo no puede estar vacío."
+            someError = true
+        } else {
+            passwordError = nil
+        }
+        
+        if !isChecked {
+            someError = true
+            adviceMessage = "Es necesario aceptar el aviso de recopilación de datos."
+        } else {
+            adviceMessage = nil
+        }
+        
+        // Si no hay nigún error guardar usuario en BD
+        if !someError {
+            Task {
+                await nuevoUsuarioVM.postUsuario()
+            }
+            
+        }
     }
 }
 
