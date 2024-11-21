@@ -12,22 +12,34 @@ struct MiRuta: View {
     
     var body: some View {
         NavigationView{
+        VStack{
+            ZStack{
+                Color(hex: "#C6D444")
+                VStack{
+                    Image(Logos.mariposa)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                    Text("Mi ruta")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .padding(2)
+                }
+            }
+            .frame(maxHeight: 200)
             VStack{
-                
                 if !actividadesModel.actividadesRuta.isEmpty {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
-                            ForEach(actividadesModel.actividadesRuta.prefix(2), id: \.id) { actividad in
-                            NavigationLink("hola") {
-                            Rutaview(actividadesModelo: actividadesModel, actividad: actividad)
+                    VStack{
+                        ForEach(actividadesModel.actividadesRuta.prefix(2), id: \.id) { actividad in
+                            RutaView(actividadesModelo: actividadesModel, actividad: actividad)
                             }
                         }
-                        
+                    } else {
+                        ProgressView("Cargando tu ruta...")
+                            .padding()
                     }
-                    .padding()
-                } else {
-                    ProgressView("Cargando tu ruta...")
-                        .padding()
                 }
+                .padding()
             }
             .onAppear {
                 Task {
@@ -35,10 +47,8 @@ struct MiRuta: View {
                 }
             }
         }
-
-    }
+        }
 }
-
 
 #Preview {
     MiRuta()
