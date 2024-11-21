@@ -11,6 +11,7 @@ import FirebaseFirestore
 class ActividadesModelo: ObservableObject {
     @Published var zonas: [Zona] = []
     @Published var actividades: [Actividad] = []
+    @Published var actividadesRuta: [Actividad] = [] 
     
     let db = Firestore.firestore()
     
