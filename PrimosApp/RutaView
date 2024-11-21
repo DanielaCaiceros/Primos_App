@@ -8,64 +8,55 @@
 
 import SwiftUI
 
-struct Rutaview: View {
-    @ObservedObject var actividadesModelo: ActividadesModelo
-    @State var actividad: Actividad
-    
+struct RutaView: View {
+    @StateObject var actividadesModelo: ActividadesModelo
+    var actividad: Actividad
     var body: some View {
-        VStack {
-            ZStack {
-                HStack{
-                    if let url = URL (string: actividad.foto) {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 150)
-                        } placeholder: {
-                            ProgressView()
-                                .frame(width: 100, height: 100)
-                        }
-                    } else {
-                        Image(systemName: "photo")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(.gray)
-                    }
-                    VStack{
-                        Text(actividad.nombre)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.gray)
-                        
-                        Text(actividad.descripcion)
-                            .font(.body)
-                            .foregroundColor(.gray)
-                        
-                        Button(action: {
-                            // Acción al presionar el botón
-                            print("Calaificado")
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle")
-                                Text("Calificar")
-                            }
-                            .padding(8)
-                            .background(.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                        }
-                    }
-                }
+        
+        HStack{
+            if let url = URL (string: actividad.foto) {
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 150)
+                        .cornerRadius(12)
+                } placeholder: {
+                    ProgressView()
+                    .frame(width: 100, height: 100)}
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 100, height: 100)
+                .foregroundColor(.gray)}
+            VStack(alignment: .leading){
+                Text(actividad.nombre)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.gray)
+                    .padding(3)
                 
+                Text(actividad.descripcion)
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                
+                Button(action: {
+                    // Acción al presionar el botón
+                    print("Calaificado")
+                    
+                }) {
+                        HStack {
+                            Image(systemName: "plus.circle")
+                            Text("Calificar")}
+                        .padding(8)
+                        .background(.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
             }
-        }
-        .navigationTitle(actividad.nombre)
-        .onAppear {
-            Task {
-                await actividadesModelo.getActividadesRuta()
-            }
+            .padding(12)
+            
         }
     }
 }
