@@ -23,6 +23,7 @@ struct Logos {
     static let soyLogo = "SoyLogo"
     static let comprendoLogo = "ComprendoLogo"
     static let pequeñosLogo = "PequeñosLogo"
+    static let mariposa = "mariposa"
 }
 
 
