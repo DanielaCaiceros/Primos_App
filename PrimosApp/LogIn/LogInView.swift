@@ -8,33 +8,13 @@
 import SwiftUI
 
 struct LogInView: View {
-    @StateObject private var nuevoUsuarioVM = nuevoUsuarioModel()
-    @State private var isPasswordVisible: Bool = false
-    @State private var isChecked: Bool = false
-    @State private var isSignInScreen: Bool = false
-    @State private var nameError : String?
-    @State private var mailError : String?
-    @State private var passwordError : String?
-    @State private var adviceMessage: String?
-    @State private var someError : Bool = false
+    @StateObject private var LogInModel = LogInVM()
     
     var body: some View {
         
         ZStack(alignment: .leading) {
             Color.init(red: 0.745, green: 0.839, blue: 0.0)
                 .ignoresSafeArea()
-            VStack {
-                HStack{
-                    Button{
-                        // Cambiar idioma
-                    } label: {
-                        Image(systemName: "translate")
-                            .imageScale(.large)
-                            .foregroundStyle(AppColors.morado)
-                    }
-                    .padding()
-                }
-            }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.08)
 
@@ -51,18 +31,18 @@ struct LogInView: View {
                 VStack (alignment: .leading) {
                     Text("Nombre")
                         .font(.title3)
-                    TextField("Nombre", text: $nuevoUsuarioVM.nombre)
+                    TextField("Nombre", text: $LogInModel.nombre)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(nameError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                .stroke(LogInModel.nameError == nil ? Color.clear : Color.red, lineWidth: 1)
                         )
                         .padding(.bottom, 8)
                     
                     // Si existe, mostrar un error en el nombre
-                    if let eName = nameError {
+                    if let eName = LogInModel.nameError {
                         Text(eName)
                             .foregroundColor(.red) // Color del texto del error
                             .font(.caption) // Tamaño pequeño para el mensaje
@@ -70,19 +50,19 @@ struct LogInView: View {
 
                     Text("Correo")
                         .font(.title3)
-                    TextField("correo@example.com", text: $nuevoUsuarioVM.correo)
+                    TextField("correo@example.com", text: $LogInModel.correo)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.emailAddress)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(mailError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                .stroke(LogInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
                         )
                         .padding(.bottom, 8)
                     
                     // Si existe, mostrar un error en el correo
-                    if let eMail = mailError {
+                    if let eMail = LogInModel.mailError {
                         Text(eMail)
                             .foregroundColor(.red) // Color del texto del error
                             .font(.caption) // Tamaño pequeño para el mensaje
@@ -91,38 +71,38 @@ struct LogInView: View {
                     Text("Contraseña")
                         .font(.title3)
                     HStack{
-                        if isPasswordVisible {
-                            TextField("", text: $nuevoUsuarioVM.password)
+                        if LogInModel.isPasswordVisible {
+                            TextField("", text: $LogInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
-                                        .stroke(passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                        .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
                                 )
                             
                         } else {
-                            SecureField("12345", text: $nuevoUsuarioVM.password)
+                            SecureField("", text: $LogInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
-                                        .stroke(passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                        .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
                                 )
                         }
                         
                         Button {
-                            isPasswordVisible.toggle()
+                            LogInModel.isPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: LogInModel.isPasswordVisible ? "eye.slash" : "eye")
                                 .foregroundStyle(AppColors.morado)
                         }
                     }
                     .padding(.bottom, 8)
                     
                     // Si existe, mostrar un error en la contraseña
-                    if let ePass = passwordError {
+                    if let ePass = LogInModel.passwordError {
                         Text(ePass)
                             .foregroundColor(.red) // Color del texto del error
                             .font(.caption) // Tamaño pequeño para el mensaje
@@ -130,7 +110,7 @@ struct LogInView: View {
                     
                     Text("Edad de los visitantes:")
                         .font(.title3)
-                    TextField("Ingresa la edad", value: $nuevoUsuarioVM.edad, formatter: NumberFormatter())
+                    TextField("Ingresa la edad", value: $LogInModel.edad, formatter: NumberFormatter())
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
@@ -138,14 +118,14 @@ struct LogInView: View {
                 }.padding()
                 
                 VStack {
-                    Toggle(isOn:$isChecked) {
+                    Toggle(isOn:$LogInModel.isChecked) {
                         Text("Acepto que se recopilen datos de mi visita para mejorar la experiencia.")
                             .font(.headline)
                     }.toggleStyle(CheckboxToggleStyle())
                 }.padding(.all, 8)
                 
                 // Si existe, mostrar un error para el aviso de recopilación de datos
-                if let advice = adviceMessage {
+                if let advice = LogInModel.adviceMessage {
                     Text(advice)
                         .foregroundColor(.red) // Color del texto del error
                         .font(.caption) // Tamaño pequeño para el mensaje
@@ -154,7 +134,9 @@ struct LogInView: View {
                 VStack {
                     Button {
                         // Enviar los datos de registro a la BD
-                        validatePostUser()
+                        Task {
+                            await LogInModel.validarDatos()
+                        }
                     } label: {
                         Text("Registrarme")
                             .padding()
@@ -164,17 +146,26 @@ struct LogInView: View {
                             .background(AppColors.verde)
                             .cornerRadius(10)
                     }
+                    .fullScreenCover(isPresented: $LogInModel.logged) {
+                        ContentView()
+                    }
                 }.padding()
+                
+                if let errorMessage = LogInModel.newError {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
                 
                 HStack {
                     Button {
-                        isSignInScreen = true
+                        LogInModel.isSignInScreen = true
                     } label : {
                         Text("¿Ya tienes cuenta?")
                             .font(.title2)
                             .foregroundStyle(AppColors.morado)
                     }
-                    .fullScreenCover(isPresented: $isSignInScreen) {
+                    .fullScreenCover(isPresented: $LogInModel.isSignInScreen) {
                         SignInView()
                     }
                 }
@@ -186,40 +177,39 @@ struct LogInView: View {
     }
     
     private func validatePostUser() {
-        someError = false
+        LogInModel.someError = false
         
-        if nuevoUsuarioVM.nombre.isEmpty {
-            nameError = "Este campo no puede estar vacío."
-            someError = true
+        if LogInModel.nombre.isEmpty {
+            LogInModel.nameError = "Este campo no puede estar vacío."
+            LogInModel.someError = true
         } else {
-            nameError = nil
+            LogInModel.nameError = nil
         }
-        if nuevoUsuarioVM.correo.isEmpty {
-            mailError = "Este campo no puede estar vacío."
-            someError = true
+        if LogInModel.correo.isEmpty {
+            LogInModel.mailError = "Este campo no puede estar vacío."
+            LogInModel.someError = true
         } else {
-            mailError = nil
+            LogInModel.mailError = nil
         }
-        if nuevoUsuarioVM.password.isEmpty{
-            passwordError = "Este campo no puede estar vacío."
-            someError = true
+        if LogInModel.password.isEmpty{
+            LogInModel.passwordError = "Este campo no puede estar vacío."
+            LogInModel.someError = true
         } else {
-            passwordError = nil
+            LogInModel.passwordError = nil
         }
         
-        if !isChecked {
-            someError = true
-            adviceMessage = "Es necesario aceptar el aviso de recopilación de datos."
+        if !LogInModel.isChecked {
+            LogInModel.someError = true
+            LogInModel.adviceMessage = "Es necesario aceptar el aviso de recopilación de datos."
         } else {
-            adviceMessage = nil
+            LogInModel.adviceMessage = nil
         }
         
         // Si no hay nigún error guardar usuario en BD
-        if !someError {
+        if !LogInModel.someError {
             Task {
-                await nuevoUsuarioVM.postUsuario()
+                await LogInModel.registrarUsuario()
             }
-            
         }
     }
 }

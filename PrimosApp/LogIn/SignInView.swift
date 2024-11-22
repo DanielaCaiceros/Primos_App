@@ -8,28 +8,12 @@
 import SwiftUI
 
 struct SignInView: View {
-    @State var usuario = ""
-    @State var correo = ""
-    @State var password = ""
-    @State private var isPasswordVisible: Bool = false
-    @State private var isLogInScreen: Bool  = false
+    @StateObject private var SignInModel = SignInVM()
     
     var body: some View {
         ZStack(alignment: .leading) {
             Color.init(red: 0.745, green: 0.839, blue: 0.0)
                 .ignoresSafeArea()
-            VStack {
-                HStack{
-                    Button{
-                        // Cambiar idioma
-                    } label: {
-                        Image(systemName: "translate")
-                            .imageScale(.large)
-                            .foregroundStyle(AppColors.morado)
-                    }
-                    .padding()
-                }
-            }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.08)
         
@@ -41,41 +25,80 @@ struct SignInView: View {
                     .frame(width: 100)
                     .padding(.bottom, 15)
                 VStack (alignment: .leading) {
-                    Text("Nombre")
+                    Text("Correo")
                         .font(.title3)
-                    TextField("Nombre", text: $correo)
+                    TextField("correo@example.com", text: $SignInModel.correo)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
+                        .keyboardType(.emailAddress)
                         .autocorrectionDisabled()
-                        .padding(.bottom, 20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(SignInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
+                        )
+                        .padding(.bottom, 8)
+                    
+                    // Si existe, mostrar un error en el nombre
+                    if let error = SignInModel.mailError {
+                        Text(error)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                            .padding(.bottom, 8)
+                    }
                     
                     Text("Contraseña")
                         .font(.title3)
                     HStack{
-                        if isPasswordVisible {
-                            TextField("", text: $password)
+                        if SignInModel.isPasswordVisible {
+                            TextField("", text: $SignInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(SignInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                             
                         } else {
-                            SecureField("12345", text: $password)
+                            SecureField("", text: $SignInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(SignInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                         }
                         
                         Button {
-                            isPasswordVisible.toggle()
+                            SignInModel.isPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: SignInModel.isPasswordVisible ? "eye.slash" : "eye")
                                 .foregroundStyle(AppColors.morado)
                         }
                     }
+                    
+                    // Si existe, mostrar un error en el nombre
+                    if let error = SignInModel.passwordError {
+                        Text(error)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
+                    
+                    // Si existe, mostrar un error en el nombre
+                    if let error = SignInModel.errorMessage {
+                        Text(error)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
                 }
                 
+                
                 Button {
-                    // Enviar los datos de registro a la BD
+                    Task {
+                        await SignInModel.validarDatosSignIn()
+                    }
+                    
                 } label: {
                     Text("Ingresar")
                         .padding()
@@ -86,16 +109,19 @@ struct SignInView: View {
                         .cornerRadius(10)
                 }
                 .padding(.all, 20)
+                .fullScreenCover(isPresented: $SignInModel.logged) {
+                    ContentView()
+                }
                 
                 HStack {
                     Button {
-                        isLogInScreen = true
+                        SignInModel.isLogInScreen = true
                     } label : {
                         Text("¿Todavía no tienes cuenta?")
                             .font(.title3)
                             .foregroundStyle(AppColors.morado)
                     }
-                    .fullScreenCover(isPresented: $isLogInScreen) {
+                    .fullScreenCover(isPresented: $SignInModel.isLogInScreen) {
                         LogInView()
                     }
                 }

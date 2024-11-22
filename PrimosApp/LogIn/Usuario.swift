@@ -9,29 +9,20 @@ import Foundation
 import SwiftUI
 
 struct Usuario : Identifiable, Codable {
-    var id : String
+    var id : String     // ID de usuario que se autentificó
     var nombre : String
-    var correo : String
-    var password : String
     var edad : Int
-    var sal : String
     var fecha_creacion : Date
 }
 
-struct nuevoUsuario : Codable {
-    var password : String
-    var edad : Int
-    var correo : String
-    var fecha_creacion : Date
+struct UsuarioNuevo : Codable {
     var nombre : String
-    var sal : String
+    var edad : Int
+    var fecha_creacion : Date
     
-    init(nombre: String, correo: String, password: String, edad : Int, sal: String) {
-        self.password = password
-        self.edad = edad
-        self.correo = correo
-        self.fecha_creacion = Date()
+    init(nombre: String, edad : Int) {
         self.nombre = nombre
-        self.sal = sal
+        self.edad = edad
+        self.fecha_creacion = Date()
     }
 }
