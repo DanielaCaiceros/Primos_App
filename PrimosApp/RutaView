@@ -2,14 +2,14 @@
 //  RutaView.swift
 //  PrimosApp
 //
-//  Created by Alumno on 14/11/24.
+//  Created by Alumno on 19/11/24.
 //
-
 
 import SwiftUI
 
 struct RutaView: View {
     @StateObject var actividadesModelo: ActividadesModelo
+    @State private var rating = 0
     var actividad: Actividad
     var body: some View {
         
@@ -40,23 +40,26 @@ struct RutaView: View {
                 Text(actividad.descripcion)
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
-                
-                Button(action: {
-                    // Acción al presionar el botón
-                    print("Calaificado")
-                    
-                }) {
-                        HStack {
-                            Image(systemName: "plus.circle")
-                            Text("Calificar")}
-                        .padding(8)
-                        .background(.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                HStack{
+                    ForEach(1..<6) { index in
+                        Image(systemName: rating >= index ? "star.fill" : "star")
+                            .foregroundColor(rating >= index ? Color(hex: "#C6D444") : .gray)
+                            .padding(.top, 5)
+                            .onTapGesture {
+                                rating = index
+                                Task {
+                                    await                        actividadesModelo.calificarActividad(id_usuario: "RQG5wQeP2BkUnB0FAoE6", id_actividad: actividad.id, calificacion: Float(rating))
+                                }
+                            }
                     }
+                }
             }
             .padding(12)
             
         }
     }
+}
+
+#Preview {
+    MiRuta()
 }
