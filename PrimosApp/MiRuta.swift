@@ -27,11 +27,12 @@ struct MiRuta: View {
                 }
             }
             .frame(maxHeight: 200)
-            VStack{
-                if !actividadesModel.actividadesRuta.isEmpty {
-                    VStack{
-                        ForEach(actividadesModel.actividadesRuta.prefix(2), id: \.id) { actividad in
-                            RutaView(actividadesModelo: actividadesModel, actividad: actividad)
+            ScrollView{
+                VStack{
+                    if !actividadesModel.actividadesRuta.isEmpty {
+                        VStack{
+                            ForEach(actividadesModel.actividadesRuta, id: \.id) { actividad in
+                                RutaView(actividadesModelo: actividadesModel, actividad: actividad)
                             }
                         }
                     } else {
@@ -40,6 +41,7 @@ struct MiRuta: View {
                     }
                 }
                 .padding()
+            }
             }
             .onAppear {
                 Task {
@@ -50,6 +52,9 @@ struct MiRuta: View {
         }
 }
 
+
+
 #Preview {
     MiRuta()
 }
+
