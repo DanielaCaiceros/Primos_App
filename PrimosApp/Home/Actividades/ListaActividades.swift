@@ -119,4 +119,48 @@ class ActividadesModelo: ObservableObject {
         
     }
     
+    func agregarARuta(id_usuario: String, id_actividad: String, calificacion: Float) async {
+        
+        var aparece = false
+        do{
+            let docRef = try await db.collection("Mi_ruta").getDocuments()
+            for document in docRef.documents {
+                let data = document.data()
+                if id_usuario == data["id_usuario"] as? String ?? "Logo" && id_actividad == data["id_actividad"] as? String ?? "Logo" {
+                    print("Ya existe documento")
+                    aparece = true
+                }
+            }
+            if aparece == false {
+                let nue = nuevaActividadRuta(id_usuario: id_usuario, id_actividad: id_actividad, calificacion: calificacion )
+                let _ = try db.collection("Mi_ruta").addDocument(from: nue)
+            }
+        } catch {
+            print("Error al subir a Mi_ruta: \(error.localizedDescription)")
+        }
+    }
+    
+    func calificarActividad(id_usuario: String, id_actividad: String, calificacion: Float) async {
+        do {
+            let docRef = try await db.collection("Mi_ruta").getDocuments()
+            
+            for document in docRef.documents {
+                let data = document.data()
+                if id_usuario == data["id_usuario"] as? String ?? "Logo" && id_actividad == data["id_actividad"] as? String ?? "Logo" {
+                    
+                    let userRef = db.collection("Mi_ruta").document(document.documentID)
+                    do {
+                        try await userRef.updateData(["calificacion": calificacion])
+                        print("Se actualizó")
+                    } catch {
+                        print("ERROR")
+                    }
+                }
+            }
+            
+        } catch {
+            print("Error al cargar mi ruta: \(error.localizedDescription)")
+        }
+    }
+    
 }
