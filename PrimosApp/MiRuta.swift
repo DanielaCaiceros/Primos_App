@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct MiRuta: View {
     @StateObject private var actividadesModel = ActividadesModelo()
     
@@ -50,6 +51,7 @@ struct MiRuta: View {
             }
         }
         }
+    
 }
 
 
