@@ -27,7 +27,7 @@ struct QRScannerView: View {
     @State private var showDetailedInfo: Bool = false
     // Propiedades para almacenar los datos del URL
     @State private var destinationScreen: String = ""
-    @State private var actividadID: String?
+    @State private var actividadID: String = ""
     
     
     var body: some View {
@@ -132,7 +132,7 @@ struct QRScannerView: View {
         .sheet(isPresented: $showDetailedInfo, onDismiss: {
             reactivateCamera()
         }) {
-            DetailedInfoView(actividadID: scannedCode)
+            DetailedInfoView(id: actividadID)
         }
         .onDisappear() {
             session.stopRunning()
@@ -237,24 +237,7 @@ struct QRScannerView: View {
         errorMessage = message
         showError.toggle()
     }
-    /*
-    func handleScannedCode() {
-        guard let url = URL(string: scannedCode), let host = url.host else { return }
-        
-        if host == "DetailedInfoView" {
-            destinationScreen = host
-            print(destinationScreen)
-            if let components = URLComponents(string: scannedCode),
-               let userID = components.queryItems?.first(where: { $0.name == "userID" })?.value {
-                self.userID = userID
-                print(userID)
-                showDetailedInfo = true // Activar la navegación a pantalla de detalle
-            }
-        } else {
-            presentError("Código QR inválido")
-            return
-        }
-    }*/
+
     func handleScannedCode() {
         guard let url = URL(string: scannedCode) else {
             presentError("Código QR inválido")

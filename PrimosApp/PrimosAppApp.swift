@@ -21,6 +21,8 @@ struct PrimosAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
+            // ContentView()
+            
             LogInView()
                 .accentColor(Color(red: 194 / 255, green: 212 / 255, blue: 4 / 255))
         }
