@@ -1,4 +1,3 @@
-
 //  ActividadesView.swift
 //  PrimosApp
 //
@@ -11,6 +10,8 @@ import SwiftUI
 struct ActividadesView: View {
     @StateObject var actividadesModelo: ActividadesModelo
     @State private var uid: String = ""
+    @State private var isShowingToast = true
+    
     var zona: Zona
     
     var body: some View {
@@ -41,6 +42,12 @@ struct ActividadesView: View {
                         .frame(width: 100, height: 100)
                         .foregroundColor(.gray)
                 }
+                VStack{
+                    ToastView(isShowing: $isShowingToast, message: "Actividad agregada a tu ruta!")
+                        .opacity(isShowingToast ? 1 : 0)
+                }
+                .transition(.opacity)
+                .animation(.easeInOut)
             }
                         ScrollView {
                 VStack(spacing: 20) {
@@ -82,7 +89,10 @@ struct ActividadesView: View {
                                         await
                                         actividadesModelo.agregarARuta(id_usuario: uid, id_actividad: actividad.id, calificacion: 0.0)
                                     }
-                                    print("Añadir a mi ruta presionado")
+                                    isShowingToast = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                    isShowingToast = false
+                                                }
                                 }) {
                                     HStack {
                                         Image(systemName: "plus.circle")
