@@ -49,6 +49,7 @@ struct RutaView: View {
                             .padding(.top, 5)
                             .onTapGesture {
                                 rating = index
+                                fetchCurrentUserUID()
                                 Task {
                                     await                        actividadesModelo.calificarActividad(id_usuario: uid, id_actividad: actividad.id, calificacion: Float(rating))
                                 }
@@ -63,6 +64,8 @@ struct RutaView: View {
     func fetchCurrentUserUID(){
         if let user = Auth.auth().currentUser {
             uid = user.uid
+            print("CURRENT:")
+            print(uid)
         } else {
             uid = ""
         }
