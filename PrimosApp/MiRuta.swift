@@ -10,7 +10,7 @@ import FirebaseAuth
 
 struct MiRuta: View {
     @StateObject private var actividadesModel = ActividadesModelo()
-    @State private var uid:String = ""
+    @State private var uid:String? = ""
     
     var body: some View {
         NavigationView{
@@ -46,18 +46,20 @@ struct MiRuta: View {
             }
             }
             .onAppear {
+                fetchCurrentUserUID()
                 Task {
-                    await actividadesModel.getActividadesRuta(id_usuario: uid)
+                    await actividadesModel.getActividadesRuta(id_usuario: uid ?? "uh")
                 }
             }
         }
         }
     func fetchCurrentUserUID(){
-        if let user = Auth.auth().currentUser {
-            uid = user.uid
-        } else {
-            uid = ""
-        }
+        uid=Auth.auth().currentUser?.uid
+//        if let user = Auth.auth().currentUser {
+//            uid = user.uid
+//        } else {
+//            uid = ""
+//        }
     }
 }
 
@@ -66,4 +68,5 @@ struct MiRuta: View {
 #Preview {
     MiRuta()
 }
+
 
