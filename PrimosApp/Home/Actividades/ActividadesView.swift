@@ -106,6 +106,7 @@ struct ActividadesView: View {
         }
         .navigationTitle(zona.nombre)
         .onAppear {
+            fetchCurrentUserUID()
             Task {
                 await actividadesModelo.getActividadesPorZona(zonaId: zona.id)
             }
