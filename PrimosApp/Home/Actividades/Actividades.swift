@@ -31,4 +31,15 @@ struct Actividad: Identifiable, Codable {
     var zonaId: String
 }
 
+struct nuevaActividadRuta : Codable {
+    var id_usuario : String
+    var id_actividad : String
+    var calificacion : Float
+    
+    init(id_usuario: String, id_actividad: String, calificacion : Float) {
+        self.id_usuario = id_usuario
+        self.id_actividad = id_actividad
+        self.calificacion = calificacion
+    }
+}
 

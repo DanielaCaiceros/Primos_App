@@ -5,11 +5,12 @@
 //  Created by Daniela Caiceros on 12/10/24.
 //
 
-
+import FirebaseAuth
 import SwiftUI
 
 struct ActividadesView: View {
     @StateObject var actividadesModelo: ActividadesModelo
+    @State private var uid: String = ""
     var zona: Zona
     
     var body: some View {
@@ -51,7 +52,7 @@ struct ActividadesView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: 100, height: 100)
-                                        .cornerRadius(10)
+                                        .cornerRadius(13)
                                 } placeholder: {
                                     ProgressView()
                                         .frame(width: 100, height: 100)
@@ -61,7 +62,7 @@ struct ActividadesView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 100, height: 100)
-                                    .cornerRadius(10)
+                                    .cornerRadius(13)
                                     .foregroundColor(.gray)
                             }
                             
@@ -77,7 +78,10 @@ struct ActividadesView: View {
                                     .foregroundColor(.gray)
                                 
                                 Button(action: {
-                                    // Acción al presionar el botón
+                                    Task {
+                                        await
+                                        actividadesModelo.agregarARuta(id_usuario: uid, id_actividad: actividad.id, calificacion: 0.0)
+                                    }
                                     print("Añadir a mi ruta presionado")
                                 }) {
                                     HStack {
@@ -107,4 +111,12 @@ struct ActividadesView: View {
             }
         }
     }
+    func fetchCurrentUserUID(){
+        if let user = Auth.auth().currentUser {
+            uid=user.uid
+        } else {
+            uid = ""
+        }
+    }
 }
+

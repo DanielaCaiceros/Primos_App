@@ -9,8 +9,10 @@ import SwiftUI
 
 struct DetailedInfoView: View {
     @Environment(\.dismiss) var dismiss
-    var actividadID: String
-    private let papaloteGreen : Color = Color.init(red: 0.745, green: 0.839, blue: 0.0)
+    var id: String
+    @StateObject private var DetailInfoModel = DetailedInfoVM()
+    
+    // private let papaloteGreen : Color = Color.init(red: 0.745, green: 0.839, blue: 0.0)
     
     var body: some View {
         VStack(spacing: 20) {
@@ -25,7 +27,7 @@ struct DetailedInfoView: View {
                         .padding()
                 }
             }
-            .padding(.bottom, 30)
+            Spacer()
         
             // Icono y logo
             Image("logo_papalote") // Agrega la imagen del logo
@@ -36,40 +38,51 @@ struct DetailedInfoView: View {
             // Título y descripción
             VStack(alignment: .center, spacing: 20) {
                 HStack {
-                    Text("Aire")
+                    Text(DetailInfoModel.nombreActividad)
                         .font(.largeTitle)
                         .bold()
-                        .foregroundColor(papaloteGreen)
-                    Text("de Pertenezco")
-                        .font(.title)
-                        .foregroundColor(papaloteGreen)
+                        .foregroundColor(AppColors.verde)
                 }
-                Text("Introduce un pañuelo a los canales de aire, síguelo y cáchalo cuando este termine su recorrido")
+                Text(DetailInfoModel.descripcion_qr)
                     .font(.callout)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 20)
-                HStack {
-                    Text("ActividadID")
-                    Text(actividadID)
-                }
             }
 
-            // Imagen de la exhibición
-            Image("Aire_img") // Reemplaza con el nombre de la imagen
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(8)
-                .padding(.horizontal)
-
+            if let url = URL(string: DetailInfoModel.foto) {
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 100, height: 100)
+                }
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .cornerRadius(10)
+                    .foregroundColor(.gray)
+            }
             Spacer()
             
             // Barra de navegación
         }
         .padding()
+        .onAppear {
+            DetailInfoModel.actividadID = id
+            Task {
+                await DetailInfoModel.getDetallesActividad()
+            }
+        }
     }
 }
 
 
 #Preview {
-    DetailedInfoView(actividadID: "actividadID")
+    DetailedInfoView(id: "actividadID")
 }
