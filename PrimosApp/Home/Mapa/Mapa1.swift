@@ -57,7 +57,7 @@ struct Mapa1: View {
                                 }
                             }) {
                                 Rectangle()
-                                    .fill(Color.clear)
+                                    .fill(Color.black)
                                     .frame(width: 100, height: 100) // Ajustar dimensiones según la zona
                             }
                             .position(x: CGFloat(zonaPosition(zona: zona).x) * scale + offset.width + geometry.size.width / 2,
