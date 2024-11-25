@@ -10,9 +10,10 @@ struct Home: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 150, height: 150)
-                
+                    .padding(.bottom, 20)
                 Text("¿Qué quieres ver en el museo?")
                     .font(.title3)
+                    .padding(.bottom, 15)
                 
                 if !actividadesModelo.zonas.isEmpty {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
@@ -24,7 +25,7 @@ struct Home: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                                .frame(width: 200, height: 150)
+                                                .frame(width: 200, height: 125)
                                         } placeholder: {
                                             ProgressView()
                                                 .frame(width: 125, height: 75)
@@ -51,7 +52,20 @@ struct Home: View {
                     await actividadesModelo.getZonas()
                 }
             }
+
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: AnunciosView()) {
+                        Image(systemName: "bell.fill")
+                            .font(.title)
+                            .foregroundColor(AppColors.verde)
+                            .padding(.trailing, 30)
+                            .padding(.top, 30)
+                    }
+                }
+            }
         }
+        .padding(.bottom, 50)
     }
 }
 

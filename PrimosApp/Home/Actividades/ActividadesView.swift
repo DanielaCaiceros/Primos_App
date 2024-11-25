@@ -21,14 +21,18 @@ struct ActividadesView: View {
                 
                 if let url = URL(string: zona.foto) {
                     AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 150)
-                    } placeholder: {
-                        ProgressView()
-                            .frame(width: 100, height: 100)
-                    }
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 200, height: 125)
+                                .cornerRadius(20)
+                                .clipped()
+                        } placeholder: {
+                            ProgressView()
+                                .frame(width: 125, height: 75)
+                                .cornerRadius(20)
+                                .clipped()
+                        }
                 } else {
                     Image(systemName: "photo")
                         .resizable()
