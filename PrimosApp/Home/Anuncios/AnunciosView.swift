@@ -40,12 +40,23 @@ struct AnunciosView: View {
                     
                     ForEach(imaxModel.imaxItems) { imax in
                         HStack(alignment: .top, spacing: 15) {
-                            Image(imax.imagen) // Imagen del IMAX
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 150)
-                                .clipped()
-                                .cornerRadius(10)
+                            if let url = URL (string: imax.imagen) {
+                                AsyncImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 100, height: 150)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                } placeholder: {
+                                    ProgressView()
+                                    .frame(width: 100, height: 100)}
+                            } else {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100, height: 100)
+                                .foregroundColor(.gray)}
                             
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(imax.nombre)
