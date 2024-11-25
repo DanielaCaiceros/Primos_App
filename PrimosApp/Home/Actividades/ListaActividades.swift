@@ -69,7 +69,7 @@ class ActividadesModelo: ObservableObject {
         }
     }
 
-    func getActividadesRuta() async {
+    func getActividadesRuta(id_usuario: String) async {
         do {
             // 1. Obtener los documentos de "Mi_ruta"
             let querySnapshot = try await db.collection("Mi_ruta").getDocuments()
@@ -78,11 +78,18 @@ class ActividadesModelo: ObservableObject {
             // 2. Crear el arreglo arrAct con los documentID de "Mi_ruta"
             let arrAct: [String] = querySnapshot.documents.compactMap { document in
                 guard let data = document.data() as? [String: Any],
-                      let idActividad = data["id_actividad"] as? String else {
-                    return nil
+                      let idActividad = data["id_actividad"] as? String,
+                      let idUsuario = data["id_usuario"] as? String
+                else {
+                    return ""
                 }
-                return idActividad
+                if idUsuario == id_usuario {
+                        return idActividad
+                    } else {
+                        return nil
+                    }
             }
+            
             print("IDs de actividades: \(arrAct)")
             // 3. Realizar una consulta de "Actividad" con los documentIDs obtenidos
             let queryAct = try await db.collection("Actividad").getDocuments()
@@ -91,7 +98,7 @@ class ActividadesModelo: ObservableObject {
             
             for actividad in arrAct {
                 for documents in queryAct.documents{
-                    if actividad == documents.documentID {
+                    if (actividad == documents.documentID) {
                         let data = documents.data()
                         let nombre = data["nombre"] as? String ?? "-"
                         let descripcion = data["descripcion"] as? String ?? "-"
