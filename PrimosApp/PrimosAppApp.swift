@@ -23,7 +23,7 @@ struct PrimosAppApp: App {
         WindowGroup {
             // ContentView()
             LogInView()
-                .accentColor(Color(red: 0, green: 0, blue: 0))
+
         }
     }
 }

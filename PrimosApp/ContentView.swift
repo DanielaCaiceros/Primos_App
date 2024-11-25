@@ -28,7 +28,7 @@ struct ContentView: View {
                     Image(systemName: "map.circle.fill")
                 }
         }
-        .accentColor(Color(AppColors.verde))
+        .accentColor(.black)
     }
 }
 
