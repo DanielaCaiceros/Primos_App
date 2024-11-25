@@ -9,12 +9,16 @@ import SwiftUI
 
 struct LogInView: View {
     @StateObject private var LogInModel = LogInVM()
+    @FocusState var escribiendo : Bool
     
     var body: some View {
         
         ZStack(alignment: .leading) {
             Color.init(red: 0.745, green: 0.839, blue: 0.0)
                 .ignoresSafeArea()
+                .onTapGesture {
+                    escribiendo = false // Oculta el teclado
+                }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.08)
 
@@ -35,6 +39,7 @@ struct LogInView: View {
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
+                        .focused($escribiendo)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(LogInModel.nameError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -56,6 +61,7 @@ struct LogInView: View {
                         .autocorrectionDisabled()
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
+                        .focused($escribiendo)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(LogInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -78,6 +84,7 @@ struct LogInView: View {
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -89,6 +96,7 @@ struct LogInView: View {
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -118,6 +126,7 @@ struct LogInView: View {
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.numberPad)
+                        .focused($escribiendo)
                 }.padding()
                 
                 VStack {
@@ -174,47 +183,17 @@ struct LogInView: View {
                 }
             }
             .padding(.bottom, 25)
+            .onTapGesture {
+                escribiendo = false // Oculta el teclado
+            }
                     
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.88)
+        .onTapGesture {
+            escribiendo = false
+        }
     }
     
-    private func validatePostUser() {
-        LogInModel.someError = false
-        
-        if LogInModel.nombre.isEmpty {
-            LogInModel.nameError = "Este campo no puede estar vacío."
-            LogInModel.someError = true
-        } else {
-            LogInModel.nameError = nil
-        }
-        if LogInModel.correo.isEmpty {
-            LogInModel.mailError = "Este campo no puede estar vacío."
-            LogInModel.someError = true
-        } else {
-            LogInModel.mailError = nil
-        }
-        if LogInModel.password.isEmpty{
-            LogInModel.passwordError = "Este campo no puede estar vacío."
-            LogInModel.someError = true
-        } else {
-            LogInModel.passwordError = nil
-        }
-        
-        if !LogInModel.isChecked {
-            LogInModel.someError = true
-            LogInModel.adviceMessage = "Es necesario aceptar el aviso de recopilación de datos."
-        } else {
-            LogInModel.adviceMessage = nil
-        }
-        
-        // Si no hay nigún error guardar usuario en BD
-        if !LogInModel.someError {
-            Task {
-                await LogInModel.registrarUsuario()
-            }
-        }
-    }
 }
 
 struct CheckboxToggleStyle: ToggleStyle {
