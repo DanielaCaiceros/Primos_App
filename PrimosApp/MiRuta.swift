@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct MiRuta: View {
     @StateObject private var actividadesModel = ActividadesModelo()
+    @State private var uid:String = ""
     
     var body: some View {
         NavigationView{
@@ -45,11 +47,18 @@ struct MiRuta: View {
             }
             .onAppear {
                 Task {
-                    await actividadesModel.getActividadesRuta()
+                    await actividadesModel.getActividadesRuta(id_usuario: uid)
                 }
             }
         }
         }
+    func fetchCurrentUserUID(){
+        if let user = Auth.auth().currentUser {
+            uid = user.uid
+        } else {
+            uid = ""
+        }
+    }
 }
 
 
