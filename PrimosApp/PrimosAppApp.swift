@@ -22,9 +22,8 @@ struct PrimosAppApp: App {
     var body: some Scene {
         WindowGroup {
             // ContentView()
-            
             LogInView()
-                .accentColor(Color(red: 194 / 255, green: 212 / 255, blue: 4 / 255))
+                .accentColor(Color(red: 0, green: 0, blue: 0))
         }
     }
 }

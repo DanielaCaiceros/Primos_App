@@ -9,11 +9,15 @@ import SwiftUI
 
 struct SignInView: View {
     @StateObject private var SignInModel = SignInVM()
+    @FocusState var escribiendo : Bool
     
     var body: some View {
         ZStack(alignment: .leading) {
             Color.init(red: 0.745, green: 0.839, blue: 0.0)
                 .ignoresSafeArea()
+                .onTapGesture {
+                    escribiendo = false // Oculta el teclado
+                }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.08)
         
@@ -33,6 +37,7 @@ struct SignInView: View {
                         .keyboardType(.emailAddress)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                        .focused($escribiendo)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(SignInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -56,6 +61,7 @@ struct SignInView: View {
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(SignInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -67,6 +73,7 @@ struct SignInView: View {
                                 .font(.title3)
                                 .autocorrectionDisabled()
                                 .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(SignInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -130,8 +137,14 @@ struct SignInView: View {
                 }
             }
             .padding()
+            .onTapGesture {
+                escribiendo = false // Oculta el teclado
+            }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.88)
+        .onTapGesture {
+            escribiendo = false // Oculta el teclado
+        }
     }
 }
 
