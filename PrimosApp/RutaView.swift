@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct RutaView: View {
     @StateObject var actividadesModelo: ActividadesModelo
     @State private var rating = 0
+    @State private var uid:String = ""
     var actividad: Actividad
     var body: some View {
         
@@ -48,7 +50,7 @@ struct RutaView: View {
                             .onTapGesture {
                                 rating = index
                                 Task {
-                                    await                        actividadesModelo.calificarActividad(id_usuario: "RQG5wQeP2BkUnB0FAoE6", id_actividad: actividad.id, calificacion: Float(rating))
+                                    await                        actividadesModelo.calificarActividad(id_usuario: uid, id_actividad: actividad.id, calificacion: Float(rating))
                                 }
                             }
                     }
@@ -56,6 +58,13 @@ struct RutaView: View {
             }
             .padding(12)
             
+        }
+    }
+    func fetchCurrentUserUID(){
+        if let user = Auth.auth().currentUser {
+            uid = user.uid
+        } else {
+            uid = ""
         }
     }
 }
