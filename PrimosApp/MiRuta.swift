@@ -1,78 +1,58 @@
 //
-//  RutaView.swift
+//  MiRuta.swift
 //  PrimosApp
 //
-//  Created by Alumno on 19/11/24.
+//  Created by Daniela Caiceros on 12/10/24.
 //
 
 import SwiftUI
-import FirebaseAuth
 
-
-struct RutaView: View {
-    @StateObject var actividadesModelo: ActividadesModelo
-    @State private var rating = 0
-    @State private var uid: String? = nil
-    var actividad: Actividad
+struct MiRuta: View {
+    @StateObject private var actividadesModel = ActividadesModelo()
+    
     var body: some View {
-        
-        HStack{
-            if let url = URL (string: actividad.foto) {
-                AsyncImage(url: url) { image in
-                    image
+        NavigationView{
+        VStack{
+            ZStack{
+                Color(hex: "#C6D444")
+                VStack{
+                    Image(Logos.mariposa)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 150)
-                        .cornerRadius(12)
-                } placeholder: {
-                    ProgressView()
-                    .frame(width: 100, height: 100)}
-            } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 100, height: 100)
-                .foregroundColor(.gray)}
-            VStack(alignment: .leading){
-                Text(actividad.nombre)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.gray)
-                    .padding(3)
-                
-                Text(actividad.descripcion)
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                HStack{
-                    ForEach(1..<6) { index in
-                        Image(systemName: rating >= index ? "star.fill" : "star")
-                            .foregroundColor(rating >= index ? Color(hex: "#C6D444") : .gray)
-                            .padding(.top, 5)
-                            .onTapGesture {
-                                rating = index
-                                Task {
-                                    await                        actividadesModelo.calificarActividad(id_usuario: uid ?? "SIN USUARIO", id_actividad: actividad.id, calificacion: Float(rating))
-                                }
-                            }
-                    }
+                        .frame(width: 100, height: 100)
+                    Text("Mi ruta")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .padding(2)
                 }
             }
-            .padding(12)
-            
-        }
-        .onAppear {
-                   fetchCurrentUserUID()
-        }
-    }
-    
-    func fetchCurrentUserUID() {
-            if let user = Auth.auth().currentUser {
-                uid = user.uid
-            } else {
-                uid = nil // Usuario no autenticado
+            .frame(maxHeight: 200)
+            ScrollView{
+                VStack{
+                    if !actividadesModel.actividadesRuta.isEmpty {
+                        VStack{
+                            ForEach(actividadesModel.actividadesRuta, id: \.id) { actividad in
+                                RutaView(actividadesModelo: actividadesModel, actividad: actividad)
+                            }
+                        }
+                    } else {
+                        ProgressView("Cargando tu ruta...")
+                            .padding()
+                    }
+                }
+                .padding()
             }
-    }
+            }
+            .onAppear {
+                Task {
+                    await actividadesModel.getActividadesRuta()
+                }
+            }
+        }
+        }
 }
+
+
 
 #Preview {
     MiRuta()
