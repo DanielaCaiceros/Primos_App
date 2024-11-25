@@ -19,7 +19,6 @@ struct Mapa1: View {
         NavigationStack {
             GeometryReader { geometry in
                 ZStack {
-                    // Imagen del mapa con gestos de zoom y desplazamiento
                     Image("PA_mapa")
                         .resizable()
                         .scaledToFill()
@@ -48,20 +47,18 @@ struct Mapa1: View {
                                 }
                         )
                     
-                    // Botones interactivos para diferentes zonas del mapa
                     if !actividadesModelo.zonas.isEmpty {
                         ForEach(actividadesModelo.zonas) { zona in
                             Button(action: {
                                 selectedZona = zona
                                 isShowingPopover = true
                                 Task {
-                                    // Cargar las actividades de la zona seleccionada
                                     await actividadesModelo.getActividadesPorZona(zonaId: zona.id)
                                 }
                             }) {
                                 Rectangle()
                                     .fill(Color.clear)
-                                    .frame(width: 200, height: 200) // Ajustar dimensiones según la zona
+                                    .frame(width: 100, height: 100) // Ajustar dimensiones según la zona
                             }
                             .position(x: CGFloat(zonaPosition(zona: zona).x) * scale + offset.width + geometry.size.width / 2,
                                       y: CGFloat(zonaPosition(zona: zona).y) * scale + offset.height + geometry.size.height / 2)
@@ -78,28 +75,24 @@ struct Mapa1: View {
             .navigationBarTitle("Mapa Planta Alta", displayMode: .inline)
             .onAppear {
                 Task {
-                    await actividadesModelo.getZonas() // Cargar zonas desde Firebase
+                    await actividadesModelo.getZonas()
                 }
             }
         }
     }
     
-    // Función para obtener la posición de una zona en el mapa
     private func zonaPosition(zona: Zona) -> (x: Int, y: Int) {
-        // Ajustar las posiciones según la zona
         switch zona.nombre {
-        case "Exposiciones temporales":
-            return (x: -290, y: 40)
         case "Pertenezco":
-            return (x: -90, y: -175)
+            return (x: -90, y: -150)
         case "Pequeños":
             return (x: 225, y: -185)
         case "Comunico":
-            return (x: 185, y: 15)
-        case "Tienda":
-            return (x: -100, y: 300)
+            return (x: 150, y: 15)
         default:
-            return (x: 0, y: 0) // Coordenadas por defecto si no coincide con ninguna zona
+            return (x: 0, y: 0)
         }
     }
 }
+
+
