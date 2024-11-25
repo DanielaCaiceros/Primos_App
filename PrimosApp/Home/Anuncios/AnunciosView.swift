@@ -57,6 +57,12 @@ struct AnunciosView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 100, height: 100)
                                 .foregroundColor(.gray)}
+//                            Image(imax.imagen) // Imagen del IMAX
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fill)
+//                                .frame(width: 100, height: 150)
+//                                .clipped()
+//                                .cornerRadius(10)
                             
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(imax.nombre)
@@ -111,6 +117,7 @@ struct AnunciosView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 100, height: 100)
                                 .foregroundColor(.gray)}
+
                             
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(anuncio.nombre)
