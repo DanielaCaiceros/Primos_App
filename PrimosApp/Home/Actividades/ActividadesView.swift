@@ -47,7 +47,7 @@ struct ActividadesView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .frame(width: 100, height: 100)
-                                        .cornerRadius(10)
+                                        .cornerRadius(13)
                                 } placeholder: {
                                     ProgressView()
                                         .frame(width: 100, height: 100)
@@ -57,7 +57,7 @@ struct ActividadesView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 100, height: 100)
-                                    .cornerRadius(10)
+                                    .cornerRadius(13)
                                     .foregroundColor(.gray)
                             }
                             
