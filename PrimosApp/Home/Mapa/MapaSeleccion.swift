@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MapaSeleccion: View {
-    @State private var selectedFloor: String = "PB_mapa" // "PB_mapa" para Piso 1, "PA_mapa" para Piso 2
+    @State private var selectedFloor: String = "PB_mapa"
     @State private var showMapDetail = false
 
     var body: some View {

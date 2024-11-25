@@ -12,130 +12,94 @@ struct Mapa1: View {
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
     @State private var isShowingPopover: Bool = false
-    @State private var selectedArea: String = ""
-
+    @State private var selectedZona: Zona? = nil
+    @StateObject private var actividadesModelo = ActividadesModelo()
+    
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Image("PA_mapa")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .scaleEffect(min(max(scale, 1.0), 3.0))
-                    .offset(x: offset.width, y: offset.height)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                scale = lastScaleValue * value
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    // Imagen del mapa con gestos de zoom y desplazamiento
+                    Image("PA_mapa")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .scaleEffect(min(max(scale, 1.0), 3.0))
+                        .offset(x: offset.width, y: offset.height)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    scale = lastScaleValue * value
+                                }
+                                .onEnded { _ in
+                                    lastScaleValue = scale
+                                }
+                        )
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    offset = CGSize(
+                                        width: lastOffset.width + value.translation.width,
+                                        height: lastOffset.height + value.translation.height
+                                    )
+                                }
+                                .onEnded { _ in
+                                    lastOffset = offset
+                                }
+                        )
+                    
+                    // Botones interactivos para diferentes zonas del mapa
+                    if !actividadesModelo.zonas.isEmpty {
+                        ForEach(actividadesModelo.zonas) { zona in
+                            Button(action: {
+                                selectedZona = zona
+                                isShowingPopover = true
+                                Task {
+                                    // Cargar las actividades de la zona seleccionada
+                                    await actividadesModelo.getActividadesPorZona(zonaId: zona.id)
+                                }
+                            }) {
+                                Rectangle()
+                                    .fill(Color.clear)
+                                    .frame(width: 200, height: 200) // Ajustar dimensiones según la zona
                             }
-                            .onEnded { _ in
-                                lastScaleValue = scale
-                            }
-                    )
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                offset = CGSize(
-                                    width: lastOffset.width + value.translation.width,
-                                    height: lastOffset.height + value.translation.height
-                                )
-                            }
-                            .onEnded { _ in
-                                lastOffset = offset
-                            }
-                    )
-
-                // EXPOSICIONES TEMPORALES
-                Button(action: {
-                    selectedArea = "Exposiciones temporales"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 150, height: 200)
-                }
-                .position(x: -290 * scale + offset.width + geometry.size.width / 2,
-                          y: 40 * scale + offset.height + geometry.size.height / 2)
-                
-                // PERTENEZCO
-                Button(action: {
-                    selectedArea = "Pertenezco"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 250, height: 450)
-                }
-                .position(x: -90 * scale + offset.width + geometry.size.width / 2,
-                          y: -175 * scale + offset.height + geometry.size.height / 2)
-                Button(action: {
-                    selectedArea = "Pertenezco"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 200, height: 175)
-                }
-                .position(x: 100 * scale + offset.width + geometry.size.width / 2,
-                          y: -335 * scale + offset.height + geometry.size.height / 2)
-                
-                //PEQUEÑOS
-                Button(action: {
-                    selectedArea = "Pequeños"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 200, height: 125)
-                }
-                .position(x: 225 * scale + offset.width + geometry.size.width / 2,
-                          y: -185 * scale + offset.height + geometry.size.height / 2)
-                
-                //Comunico
-                Button(action: {
-                    selectedArea = "Comunico"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 275, height: 200)
-                }
-                .position(x: 185 * scale + offset.width + geometry.size.width / 2,
-                          y: 15 * scale + offset.height + geometry.size.height / 2)
-                
-                //Tienda
-                Button(action: {
-                    selectedArea = "Pequeños"
-                    isShowingPopover = true
-                }) {
-                    Rectangle()
-                        .fill(Color.clear)
-                        .frame(width: 100, height: 175)
-                }
-                .position(x: -100 * scale + offset.width + geometry.size.width / 2,
-                          y: 300 * scale + offset.height + geometry.size.height / 2)
-                
-            }
-
-            .popover(isPresented: $isShowingPopover) {
-                VStack {
-                    Text("Información sobre \(selectedArea)")
-                        .font(.headline)
-                    Text("Descripción detallada del área seleccionada en Piso 2.")
-                        .font(.subheadline)
-                    Button("Cerrar") {
-                        isShowingPopover = false
+                            .position(x: CGFloat(zonaPosition(zona: zona).x) * scale + offset.width + geometry.size.width / 2,
+                                      y: CGFloat(zonaPosition(zona: zona).y) * scale + offset.height + geometry.size.height / 2)
+                        }
                     }
-                    .padding(.top, 20)
                 }
-                .padding()
+                .popover(isPresented: $isShowingPopover) {
+                    if let zona = selectedZona {
+                        ActividadesView(actividadesModelo: actividadesModelo, zona: zona)
+                    }
+                }
+            }
+            .edgesIgnoringSafeArea(.all)
+            .navigationBarTitle("Mapa Planta Alta", displayMode: .inline)
+            .onAppear {
+                Task {
+                    await actividadesModelo.getZonas() // Cargar zonas desde Firebase
+                }
             }
         }
-        .edgesIgnoringSafeArea(.all)
-        .navigationBarTitle("Mapa Planta Alta", displayMode: .inline)
     }
-}
-
-#Preview {
-    Mapa1()
+    
+    // Función para obtener la posición de una zona en el mapa
+    private func zonaPosition(zona: Zona) -> (x: Int, y: Int) {
+        // Ajustar las posiciones según la zona
+        switch zona.nombre {
+        case "Exposiciones temporales":
+            return (x: -290, y: 40)
+        case "Pertenezco":
+            return (x: -90, y: -175)
+        case "Pequeños":
+            return (x: 225, y: -185)
+        case "Comunico":
+            return (x: 185, y: 15)
+        case "Tienda":
+            return (x: -100, y: 300)
+        default:
+            return (x: 0, y: 0) // Coordenadas por defecto si no coincide con ninguna zona
+        }
+    }
 }
