@@ -20,7 +20,7 @@ class IMAXModel: ObservableObject {
             
             for document in querySnapshot.documents {
                 let data = document.data()
-                let descripcion = data["Descripción"] as? String ?? "-"
+                let descripcion = data["Descripcion"] as? String ?? "-"
                 let horarios = data["Horarios"] as? String ?? "-"
                 let imagen = data["Imagen"] as? String ?? "-"
                 let nombre = data["Nombre"] as? String ?? "-"
