@@ -94,12 +94,23 @@ struct AnunciosView: View {
                     
                     ForEach(anunciosModel.Anuncio) { anuncio in
                         HStack(alignment: .top, spacing: 15) {
-                            Image(anuncio.imagen)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 80, height: 80)
-                                .clipped()
-                                .cornerRadius(10)
+                            if let url = URL (string: anuncio.imagen) {
+                                AsyncImage(url: url) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 80, height: 80)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                } placeholder: {
+                                    ProgressView()
+                                    .frame(width: 100, height: 100)}
+                            } else {
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100, height: 100)
+                                .foregroundColor(.gray)}
                             
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(anuncio.nombre)
