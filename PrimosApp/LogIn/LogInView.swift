@@ -55,6 +55,7 @@ struct LogInView: View {
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(LogInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -76,6 +77,7 @@ struct LogInView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
@@ -86,6 +88,7 @@ struct LogInView: View {
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 5)
                                         .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)

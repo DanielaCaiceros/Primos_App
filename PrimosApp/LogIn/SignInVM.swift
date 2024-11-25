@@ -9,6 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 
+@MainActor
 class SignInVM : ObservableObject {
     @Published var correo : String = ""
     @Published var password : String = ""
