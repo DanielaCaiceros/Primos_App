@@ -11,6 +11,7 @@ struct ActividadesView: View {
     @StateObject var actividadesModelo: ActividadesModelo
     @State private var uid: String = ""
     @State private var isShowingToast = true
+    @State private var textoBoton = "Añadir a mi ruta"
     
     var zona: Zona
     
@@ -89,14 +90,11 @@ struct ActividadesView: View {
                                         await
                                         actividadesModelo.agregarARuta(id_usuario: uid, id_actividad: actividad.id, calificacion: 0.0)
                                     }
-                                    isShowingToast = true
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                                    isShowingToast = false
-                                                }
+                                    textoBoton = "✔︎ Agregado a tu ruta"
                                 }) {
                                     HStack {
                                         Image(systemName: "plus.circle")
-                                        Text("Añadir a mi ruta")
+                                        Text(textoBoton)
                                     }
                                     .padding(8)
                                     .background(Color(hex: zona.color))
@@ -130,4 +128,5 @@ struct ActividadesView: View {
         }
     }
 }
+
 
