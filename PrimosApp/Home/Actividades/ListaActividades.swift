@@ -164,10 +164,58 @@ class ActividadesModelo: ObservableObject {
                     }
                 }
             }
+            await self.actualizarCal(id_actividad: id_actividad)
             
         } catch {
             print("Error al cargar mi ruta: \(error.localizedDescription)")
         }
     }
     
+    func actualizarCal(id_actividad: String) async {
+        var sum = 0
+        var num = 0
+        do {
+            //CALCULAR
+            let querySnapshot = try await db.collection("Mi_ruta").whereField("id_actividad", isEqualTo: id_actividad).getDocuments()
+            
+            for doc in querySnapshot.documents {
+                let data = doc.data()
+                var cal = data["calificacion"]as? Int ?? 0
+                if cal != 0 {
+                    sum = sum + cal
+                    num += 1
+                }
+            }
+            var cal = sum/num
+            
+            //ACTUALIZAR
+            let userRef = db.collection("Actividad").document(id_actividad)
+            do {
+                try await userRef.updateData(["calificacion": cal])
+                print("Se actualizó calificación en Actividad")
+            } catch {
+                print("ERROR")
+            }
+            
+        } catch {
+            
+        }
+    }
+    
+    func getColor(id_zona: String) async -> String {
+        var color:  String = ""
+        do {
+            let querySnapshot = try await db.collection("Zona").whereField("id_zona", isEqualTo: id_zona).getDocuments()
+            
+            for document in querySnapshot.documents {
+                let data = document.data()
+                color = data["color"] as? String ?? "#FFFFFF"
+            }
+        } catch {
+            print("ERROR al obtener color")
+        }
+        return color
+    }
+    
 }
+
