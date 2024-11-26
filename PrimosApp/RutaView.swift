@@ -12,6 +12,7 @@ struct RutaView: View {
     @StateObject var actividadesModelo: ActividadesModelo
     @State private var rating = 0
     @State private var uid:String = ""
+    @State private var color:String? = ""
     var actividad: Actividad
     var body: some View {
         
@@ -69,6 +70,9 @@ struct RutaView: View {
         } else {
             uid = ""
         }
+    }
+    func colorAct(id_zona: String) async {
+        color = await actividadesModelo.getColor(id_zona: actividad.zonaId)
     }
 }
 
