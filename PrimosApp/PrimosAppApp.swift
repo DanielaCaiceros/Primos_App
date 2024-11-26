@@ -23,7 +23,6 @@ struct PrimosAppApp: App {
         WindowGroup {
             // ContentView()
             LogInView()
-
         }
     }
 }
