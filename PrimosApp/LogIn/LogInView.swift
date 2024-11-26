@@ -8,31 +8,17 @@
 import SwiftUI
 
 struct LogInView: View {
-    @State var usuario = ""
-    @State var correo = ""
-    @State var password = ""
-    @State var edad = 0
-    @State private var isPasswordVisible: Bool = false
-    @State private var isChecked: Bool = false
-    @State private var isSignInScreen: Bool = false
+    @StateObject private var LogInModel = LogInVM()
+    @FocusState var escribiendo : Bool
     
     var body: some View {
         
         ZStack(alignment: .leading) {
             Color.init(red: 0.745, green: 0.839, blue: 0.0)
                 .ignoresSafeArea()
-            VStack {
-                HStack{
-                    Button{
-                        // Cambiar idioma
-                    } label: {
-                        Image(systemName: "translate")
-                            .imageScale(.large)
-                            .foregroundStyle(AppColors.morado)
-                    }
-                    .padding()
+                .onTapGesture {
+                    escribiendo = false // Oculta el teclado
                 }
-            }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.08)
 
@@ -49,65 +35,120 @@ struct LogInView: View {
                 VStack (alignment: .leading) {
                     Text("Nombre")
                         .font(.title3)
-                    TextField("Nombre", text: $correo)
+                    TextField("Nombre", text: $LogInModel.nombre)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
+                        .focused($escribiendo)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(LogInModel.nameError == nil ? Color.clear : Color.red, lineWidth: 1)
+                        )
                         .padding(.bottom, 8)
                     
+                    // Si existe, mostrar un error en el nombre
+                    if let eName = LogInModel.nameError {
+                        Text(eName)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
+
                     Text("Correo")
                         .font(.title3)
-                    TextField("correo@example.com", text: $usuario)
+                    TextField("correo@example.com", text: $LogInModel.correo)
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .focused($escribiendo)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(LogInModel.mailError == nil ? Color.clear : Color.red, lineWidth: 1)
+                        )
                         .padding(.bottom, 8)
+                    
+                    // Si existe, mostrar un error en el correo
+                    if let eMail = LogInModel.mailError {
+                        Text(eMail)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
                     
                     Text("Contraseña")
                         .font(.title3)
                     HStack{
-                        if isPasswordVisible {
-                            TextField("", text: $password)
+                        if LogInModel.isPasswordVisible {
+                            TextField("", text: $LogInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                             
                         } else {
-                            SecureField("12345", text: $password)
+                            SecureField("", text: $LogInModel.password)
                                 .textFieldStyle(.roundedBorder)
                                 .font(.title3)
                                 .autocorrectionDisabled()
+                                .textInputAutocapitalization(.never)
+                                .focused($escribiendo)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(LogInModel.passwordError == nil ? Color.clear : Color.red, lineWidth: 1)
+                                )
                         }
                         
                         Button {
-                            isPasswordVisible.toggle()
+                            LogInModel.isPasswordVisible.toggle()
                         } label: {
-                            Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                            Image(systemName: LogInModel.isPasswordVisible ? "eye.slash" : "eye")
                                 .foregroundStyle(AppColors.morado)
                         }
                     }
                     .padding(.bottom, 8)
                     
+                    // Si existe, mostrar un error en la contraseña
+                    if let ePass = LogInModel.passwordError {
+                        Text(ePass)
+                            .foregroundColor(.red) // Color del texto del error
+                            .font(.caption) // Tamaño pequeño para el mensaje
+                    }
+                    
                     Text("Edad de los visitantes:")
                         .font(.title3)
-                    TextField("Ingresa la edad", value: $edad, formatter: NumberFormatter())
+                    TextField("Ingresa la edad", value: $LogInModel.edad, formatter: NumberFormatter())
                         .textFieldStyle(.roundedBorder)
                         .font(.title3)
                         .autocorrectionDisabled()
                         .keyboardType(.numberPad)
+                        .focused($escribiendo)
                 }.padding()
                 
                 VStack {
-                    Toggle(isOn:$isChecked) {
+                    Toggle(isOn:$LogInModel.isChecked) {
                         Text("Acepto que se recopilen datos de mi visita para mejorar la experiencia.")
                             .font(.headline)
                     }.toggleStyle(CheckboxToggleStyle())
                 }.padding(.all, 8)
                 
+                // Si existe, mostrar un error para el aviso de recopilación de datos
+                if let advice = LogInModel.adviceMessage {
+                    Text(advice)
+                        .foregroundColor(.red) // Color del texto del error
+                        .font(.caption) // Tamaño pequeño para el mensaje
+                }
+                
                 VStack {
                     Button {
                         // Enviar los datos de registro a la BD
+                        Task {
+                            await LogInModel.validarDatos()
+                        }
                     } label: {
                         Text("Registrarme")
                             .padding()
@@ -117,30 +158,42 @@ struct LogInView: View {
                             .background(AppColors.verde)
                             .cornerRadius(10)
                     }
+                    .fullScreenCover(isPresented: $LogInModel.logged) {
+                        ContentView()
+                    }
                 }.padding()
+                
+                if let errorMessage = LogInModel.newError {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
                 
                 HStack {
                     Button {
-                        isSignInScreen = true
+                        LogInModel.isSignInScreen = true
                     } label : {
                         Text("¿Ya tienes cuenta?")
                             .font(.title2)
                             .foregroundStyle(AppColors.morado)
                     }
-                    .fullScreenCover(isPresented: $isSignInScreen) {
+                    .fullScreenCover(isPresented: $LogInModel.isSignInScreen) {
                         SignInView()
                     }
                 }
             }
             .padding(.bottom, 25)
+            .onTapGesture {
+                escribiendo = false // Oculta el teclado
+            }
                     
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.88)
+        .onTapGesture {
+            escribiendo = false
+        }
     }
     
-    func salt() {
-        
-    }
 }
 
 struct CheckboxToggleStyle: ToggleStyle {
