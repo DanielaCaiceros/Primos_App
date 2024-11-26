@@ -43,12 +43,6 @@ struct ActividadesView: View {
                         .frame(width: 100, height: 100)
                         .foregroundColor(.gray)
                 }
-                VStack{
-                    ToastView(isShowing: $isShowingToast, message: "Actividad agregada a tu ruta!")
-                        .opacity(isShowingToast ? 1 : 0)
-                }
-                .transition(.opacity)
-                .animation(.easeInOut)
             }
                         ScrollView {
                 VStack(spacing: 20) {
