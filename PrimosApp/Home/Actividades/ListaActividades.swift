@@ -60,7 +60,9 @@ class ActividadesModelo: ObservableObject {
                 let zonaId = data["id_zona"] as? String ?? ""
 
                 let actividad = Actividad(id: id, nombre: nombre, descripcion: descripcion, foto: foto, calificacion: calificacion, x: x, y: y, Piso: Piso, tiempo: tiempo, disponibilidad: disponibilidad, zonaId: zonaId)
-                arrActividades.append(actividad)
+                if disponibilidad == true {
+                    arrActividades.append(actividad)
+                }
             }
            self.actividades = arrActividades
         
